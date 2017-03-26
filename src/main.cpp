@@ -68,7 +68,11 @@ int main(int argc, char* argv[]) {
 
   // prep the measurement packages (each line represents a measurement at a
   // timestamp)
-  while (getline(in_file_, line)) {
+  int i =0;
+  while (getline(in_file_, line) && (i <= 3)) {
+
+    //i++;
+    //std::cout << line << std::endl;
 
     string sensor_type;
     MeasurementPackage meas_package;
@@ -96,18 +100,19 @@ int main(int argc, char* argv[]) {
       // RADAR MEASUREMENT
 
       // read measurements at this timestamp
-      meas_package.sensor_type_ = MeasurementPackage::RADAR;
-      meas_package.raw_measurements_ = VectorXd(3);
-      float ro;
-      float phi;
-      float ro_dot;
-      iss >> ro;
-      iss >> phi;
-      iss >> ro_dot;
-      meas_package.raw_measurements_ << ro, phi, ro_dot;
-      iss >> timestamp;
-      meas_package.timestamp_ = timestamp;
-      measurement_pack_list.push_back(meas_package);
+      // meas_package.sensor_type_ = MeasurementPackage::RADAR;
+      // meas_package.raw_measurements_ = VectorXd(3);
+      // float ro;
+      // float phi;
+      // float ro_dot;
+      // iss >> ro;
+      // iss >> phi;
+      // iss >> ro_dot;
+      // meas_package.raw_measurements_ << ro, phi, ro_dot;
+      // iss >> timestamp;
+      // meas_package.timestamp_ = timestamp;
+      // measurement_pack_list.push_back(meas_package);
+      continue;
     }
 
     // read ground truth data to compare later
