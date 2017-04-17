@@ -68,10 +68,9 @@ int main(int argc, char* argv[]) {
 
   // prep the measurement packages (each line represents a measurement at a
   // timestamp)
-  int i =0;
-  while (getline(in_file_, line) && (i <= 3)) {
 
-    //i++;
+  while (getline(in_file_, line))  {
+
     //std::cout << line << std::endl;
 
     string sensor_type;
@@ -96,23 +95,23 @@ int main(int argc, char* argv[]) {
       iss >> timestamp;
       meas_package.timestamp_ = timestamp;
       measurement_pack_list.push_back(meas_package);
-    } else if (sensor_type.compare("R") == 0) {
-      // RADAR MEASUREMENT
 
-      // read measurements at this timestamp
-      // meas_package.sensor_type_ = MeasurementPackage::RADAR;
-      // meas_package.raw_measurements_ = VectorXd(3);
-      // float ro;
-      // float phi;
-      // float ro_dot;
-      // iss >> ro;
-      // iss >> phi;
-      // iss >> ro_dot;
-      // meas_package.raw_measurements_ << ro, phi, ro_dot;
-      // iss >> timestamp;
-      // meas_package.timestamp_ = timestamp;
-      // measurement_pack_list.push_back(meas_package);
-      continue;
+    } else if (sensor_type.compare("R") == 0) {
+      //RADAR MEASUREMENT
+
+      //read measurements at this timestamp
+      meas_package.sensor_type_ = MeasurementPackage::RADAR;
+      meas_package.raw_measurements_ = VectorXd(3);
+      float ro;
+      float phi;
+      float ro_dot;
+      iss >> ro;
+      iss >> phi;
+      iss >> ro_dot;
+      meas_package.raw_measurements_ << ro, phi, ro_dot;
+      iss >> timestamp;
+      meas_package.timestamp_ = timestamp;
+      measurement_pack_list.push_back(meas_package);
     }
 
     // read ground truth data to compare later
@@ -138,7 +137,12 @@ int main(int argc, char* argv[]) {
 
   //Call the EKF-based fusion
   size_t N = measurement_pack_list.size();
+
+  std::cout << "running..." << std::endl;
   for (size_t k = 0; k < N; ++k) {
+
+    std::cout << "------>"<< k << " of :" <<  N << std::endl;
+
     // start filtering from the second frame (the speed is unknown in the first
     // frame)
     fusionEKF.ProcessMeasurement(measurement_pack_list[k]);
@@ -161,15 +165,19 @@ int main(int argc, char* argv[]) {
       out_file_ << ro * cos(phi) << "\t"; // p1_meas
       out_file_ << ro * sin(phi) << "\t"; // ps_meas
     }
-
+  
     // output the ground truth packages
     out_file_ << gt_pack_list[k].gt_values_(0) << "\t";
     out_file_ << gt_pack_list[k].gt_values_(1) << "\t";
     out_file_ << gt_pack_list[k].gt_values_(2) << "\t";
     out_file_ << gt_pack_list[k].gt_values_(3) << "\n";
 
+
+
     estimations.push_back(fusionEKF.ekf_.x_);
     ground_truth.push_back(gt_pack_list[k].gt_values_);
+
+    std::cout << "------>"<< k << " of :" <<  N << "FINISHED" << std::endl;
   }
 
   // compute the accuracy (RMSE)
