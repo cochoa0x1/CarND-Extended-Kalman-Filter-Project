@@ -113,10 +113,14 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
               0, 0, 0, 0;
       ekf_.Init(x_in, P_in, F_in, H_in, R_radar_, Q_in) ;
 
-      float x = measurement_pack.raw_measurements_[1]*std::cos(measurement_pack.raw_measurements_[0]);
-      float y = measurement_pack.raw_measurements_[1]*std::sin(measurement_pack.raw_measurements_[0]);
-      float xv = measurement_pack.raw_measurements_[2]*std::cos(measurement_pack.raw_measurements_[0]);
-      float yv = measurement_pack.raw_measurements_[2]*std::sin(measurement_pack.raw_measurements_[0]);
+      float p = measurement_pack.raw_measurements_[0];
+      float theta = measurement_pack.raw_measurements_[1];
+      float v = measurement_pack.raw_measurements_[2];
+
+      float x = p*std::cos(theta);
+      float y = p*std::sin(theta);
+      float xv = v*std::cos(theta);
+      float yv = v*std::sin(theta);
     
       ekf_.x_ << x,y,xv,yv;
 
@@ -170,9 +174,9 @@ cout << "get timestamp" << endl;
   cout << "init vars" << endl;
   ekf_.F_ = MatrixXd(4, 4);
   ekf_.F_ << 1, 0, dt, 0,
-        0, 1, 0, dt,
-        0, 0, 1, 0,
-        0, 0, 0, 1;
+             0, 1, 0, dt,
+             0, 0, 1, 0,
+             0, 0, 0, 1;
 
 
   float noise_ax = 9;
@@ -184,10 +188,9 @@ cout << "get timestamp" << endl;
 
   ekf_.Q_ = MatrixXd(4, 4);
   ekf_.Q_ << .25*dt4*noise_ax, 0, .5*dt3*noise_ax, 0,
-       0,.25*dt4*noise_ay, 0, .5*dt3*noise_ay,
-        .5*dt3*noise_ax, 0, dt2*noise_ax, 0,
-        0, .5*dt3*noise_ay, 0, dt2*noise_ay;
-
+              0,.25*dt4*noise_ay, 0, .5*dt3*noise_ay,
+              .5*dt3*noise_ax, 0, dt2*noise_ax, 0,
+              0, .5*dt3*noise_ay, 0, dt2*noise_ay;
 
 
   cout << "predict called" << endl;

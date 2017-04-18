@@ -95,6 +95,7 @@ int main(int argc, char* argv[]) {
       iss >> timestamp;
       meas_package.timestamp_ = timestamp;
       measurement_pack_list.push_back(meas_package);
+      //continue;
 
     } else if (sensor_type.compare("R") == 0) {
       //RADAR MEASUREMENT
@@ -112,6 +113,7 @@ int main(int argc, char* argv[]) {
       iss >> timestamp;
       meas_package.timestamp_ = timestamp;
       measurement_pack_list.push_back(meas_package);
+      //continue;
     }
 
     // read ground truth data to compare later

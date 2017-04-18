@@ -90,10 +90,19 @@ std::cout << "_______________RADAR UPDATE_______________" << std::endl;
   //make sure the angle is between -pi and pi 
   float theta = y(1);
   if( theta < -1.0*M_PI){
+    std::cout << std::endl << "modding theta: " << y(1) << std::endl << std::endl;
+
     y(1)+=2.0*M_PI;
+    std::cout << std::endl << "modding theta: (mod) " << y(1) << std::endl << std::endl;
+
   }else if( theta > M_PI){
+    std::cout << std::endl << "modding theta: " << y(1) << std::endl << std::endl;
+
     y(1) -= 2.0*M_PI;
+    std::cout << std::endl << "modding theta: (mod) " << y(1) << std::endl << std::endl;
+
   }
+
 
   MatrixXd Ht = H_.transpose();
 
