@@ -143,8 +143,6 @@ int main(int argc, char* argv[]) {
   std::cout << "running..." << std::endl;
   for (size_t k = 0; k < N; ++k) {
 
-    std::cout << "------>"<< k << " of :" <<  N << std::endl;
-
     // start filtering from the second frame (the speed is unknown in the first
     // frame)
     fusionEKF.ProcessMeasurement(measurement_pack_list[k]);
@@ -174,12 +172,8 @@ int main(int argc, char* argv[]) {
     out_file_ << gt_pack_list[k].gt_values_(2) << "\t";
     out_file_ << gt_pack_list[k].gt_values_(3) << "\n";
 
-
-
     estimations.push_back(fusionEKF.ekf_.x_);
     ground_truth.push_back(gt_pack_list[k].gt_values_);
-
-    std::cout << "------>"<< k << " of :" <<  N << "FINISHED" << std::endl;
   }
 
   // compute the accuracy (RMSE)

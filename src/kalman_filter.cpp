@@ -20,6 +20,7 @@ void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
 }
 
 void KalmanFilter::Predict() {
+  std::cout << "_________________PREDICT__________________" << std::endl;
   x_ = F_ * x_;
   MatrixXd Ft = F_.transpose();
   P_ = F_ * P_ * Ft + Q_;
@@ -39,10 +40,10 @@ void KalmanFilter::Update(const VectorXd &z) {
 
   MatrixXd Ht = H_.transpose();
 
-  std::cout << "H_= " << H_ << std::endl;
+  //std::cout << "H_= " << H_ << std::endl;
   //std::cout << "Hr_= " << Ht << std::endl;;
-  std::cout << "P_= " << P_ << std::endl;;
-  std::cout << "R_= " << R_ << std::endl;;
+  //std::cout << "P_= " << P_ << std::endl;;
+  //std::cout << "R_= " << R_ << std::endl;;
     
 
   MatrixXd S = H_ * P_ * Ht + R_;
@@ -83,33 +84,23 @@ std::cout << "_______________RADAR UPDATE_______________" << std::endl;
             ,std::atan2(py,px)
             ,(px*vx+py*vy)/sqrt(px*px+py*py);
 
-  std::cout << "zpred" << z_pred << std::endl;
-
   VectorXd y = z - z_pred;
 
   //make sure the angle is between -pi and pi 
   float theta = y(1);
   if( theta < -1.0*M_PI){
-    std::cout << std::endl << "modding theta: " << y(1) << std::endl << std::endl;
-
     y(1)+=2.0*M_PI;
-    std::cout << std::endl << "modding theta: (mod) " << y(1) << std::endl << std::endl;
-
   }else if( theta > M_PI){
-    std::cout << std::endl << "modding theta: " << y(1) << std::endl << std::endl;
-
     y(1) -= 2.0*M_PI;
-    std::cout << std::endl << "modding theta: (mod) " << y(1) << std::endl << std::endl;
-
   }
 
 
   MatrixXd Ht = H_.transpose();
 
-  std::cout << "H_= " << H_ << std::endl;
+  //std::cout << "H_= " << H_ << std::endl;
   //std::cout << "Hr_= " << Ht << std::endl;;
-  std::cout << "P_= " << P_ << std::endl;;
-  std::cout << "R_= " << R_ << std::endl;;
+  //std::cout << "P_= " << P_ << std::endl;;
+  //std::cout << "R_= " << R_ << std::endl;;
     
 
   MatrixXd S = H_ * P_ * Ht + R_;

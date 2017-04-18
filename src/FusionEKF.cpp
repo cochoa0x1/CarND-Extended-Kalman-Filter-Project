@@ -73,6 +73,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   // process covariance matrix
   Eigen::MatrixXd Q_in;
 
+   // measurement matrix
+      Eigen::MatrixXd H_in;
+
 
     x_in = VectorXd(4);
     x_in << 1, 1, 1, 1;
@@ -104,9 +107,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
       */
 
-      // measurement matrix
-      Eigen::MatrixXd H_in;
-      cout << "INIT RADAR" << endl;
       H_in = MatrixXd(3, 4);
       H_in << 0, 0, 0, 0,
               0, 0, 0, 0,
@@ -131,10 +131,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
         //set the state with the initial location and zero velocity
       // measurement matrix
 
-
-      cout << "INIT LIDAR" << endl;
-        Eigen::MatrixXd H_in;
-
         H_in = MatrixXd(2, 4);
         H_in << 1, 0, 0, 0,
           0, 1, 0, 0;
@@ -156,8 +152,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    *  Prediction
    ****************************************************************************/
 
-cout << "get timestamp" << endl;
-  
    //compute the time elapsed between the current and previous measurements
   float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0; //dt - expressed in seconds
   previous_timestamp_ = measurement_pack.timestamp_;
@@ -171,7 +165,6 @@ cout << "get timestamp" << endl;
      * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
    */
 
-  cout << "init vars" << endl;
   ekf_.F_ = MatrixXd(4, 4);
   ekf_.F_ << 1, 0, dt, 0,
              0, 1, 0, dt,
@@ -193,9 +186,11 @@ cout << "get timestamp" << endl;
               0, .5*dt3*noise_ay, 0, dt2*noise_ay;
 
 
-  cout << "predict called" << endl;
   ekf_.Predict();
+  cout << "x_ = " << ekf_.x_ << endl;
+  cout << "P_ = " << ekf_.P_ << endl;
 
+  Eigen::MatrixXd H_in;
   /*****************************************************************************
    *  Update
    ****************************************************************************/
@@ -207,10 +202,9 @@ cout << "get timestamp" << endl;
    */
 
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
-    cout << "radar update" << measurement_pack.sensor_type_ << endl;
     // Radar updates
     ekf_.R_ = R_radar_;
- Eigen::MatrixXd H_in;
+ 
    H_in = MatrixXd(3, 4);
       H_in << 0, 0, 0, 0,
               0, 0, 0, 0,
@@ -220,30 +214,22 @@ cout << "get timestamp" << endl;
     ekf_.H_ = tools.CalculateJacobian(ekf_.x_);
 
     ekf_.UpdateEKF(measurement_pack.raw_measurements_);
-
-cout << "radar finished" << endl;
-  
     
   } else {
     // Laser updates
-    Eigen::MatrixXd H_in;
+
     H_in = MatrixXd(2, 4);
     H_in << 1, 0, 0, 0,
       0, 1, 0, 0;
 
     ekf_.H_ = H_in;
-    cout << "lidar update" <<  measurement_pack.sensor_type_ << endl; 
     ekf_.R_ = R_laser_;
     ekf_.Update(measurement_pack.raw_measurements_);
-
-
-cout << "lidar finished" << endl;
-  
 
   }
 
   // print the output
 
-  //cout << "x_ = " << ekf_.x_ << endl;
-  //cout << "P_ = " << ekf_.P_ << endl;
+  cout << "x_ = " << ekf_.x_ << endl;
+  cout << "P_ = " << ekf_.P_ << endl;
 }
